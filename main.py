@@ -2,28 +2,33 @@ import yt_dlp
 import sys
 import os
 
-def download_video(url):
-    # المجلد المربوط بـ Volumes هو /home/pulseuser
-    # أي شيء تحمله هنا سيظهر في المجلد الذي ربطته في جهازك
+def run_download_tool(url):
+    # المجلد المربوط في الحاوية (لا تغيره)
     save_path = "/home/pulseuser"
     
+    # خيارات التحميل (جودة عالية + حفظ بالعنوان)
     ydl_opts = {
         'format': 'best',
         'outtmpl': f'{save_path}/%(title)s.%(ext)s',
+        'quiet': False,
     }
     
+    print(f"--- [PulseEngine] بدء معالجة الرابط: {url} ---", flush=True)
+    
     try:
-        print(f"--- بدء التحميل من: {url} ---", flush=True)
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        print("--- تم التحميل بنجاح في المجلد المحدد ---", flush=True)
+        
+        # التأكد من نجاح العملية محاسبياً (Audit)
+        files = os.listdir(save_path)
+        print(f"--- [PulseEngine] تم التحميل بنجاح. المحتويات الحالية: {files} ---", flush=True)
+        
     except Exception as e:
-        print(f"--- خطأ محاسبي: {str(e)} ---", flush=True)
+        print(f"--- [PulseEngine] خطأ أثناء التشغيل: {str(e)} ---", flush=True)
 
 if __name__ == "__main__":
-    # هذا السطر هو الذي يستقبل الرابط من الـ args
+    # استلام الرابط من الـ Arguments
     if len(sys.argv) > 1:
-        video_url = sys.argv[1]
-        download_video(video_url)
+        run_download_tool(sys.argv[1])
     else:
-        print("خطأ: لم يتم تزويد رابط الفيديو.", flush=True)
+        print("--- [PulseEngine] خطأ: يرجى إدخال رابط يوتيوب في حقل الـ Arguments ---", flush=True)
